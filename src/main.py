@@ -17,15 +17,19 @@ if isinstance(SECRET_KEY, str):
 
 def main():
     SEQUENTIAL_NUMBER=0 # This value should come from the database
+    PREVIOUS = ""
 
-    for i in range(51):
+    for i in range(200):
         base36 = to_base36(SEQUENTIAL_NUMBER)
 
-        encrypted=hmac.new(SECRET_KEY,base36.encode('utf-8'),hashlib.sha256).hexdigest()
+        message = f"{base36}{PREVIOUS}".encode("utf-8")
+
+        encrypted=hmac.new(SECRET_KEY,message,hashlib.sha256).hexdigest()
         
-        print(f"Decimal: {SEQUENTIAL_NUMBER:>6} | Base36: {base36:>6} | HMAC: {encrypted[:10]}")
-        
+        print(f"Decimal: {SEQUENTIAL_NUMBER:>6} | Base36: {base36:>6} | HMAC: {encrypted[:12]}")
+
         SEQUENTIAL_NUMBER+=1
+        PREVIOUS=encrypted
 
 if __name__ == "__main__":
   main()
